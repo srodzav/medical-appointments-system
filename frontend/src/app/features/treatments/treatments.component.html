@@ -1,0 +1,53 @@
+<section class="treatments" id="tratamientos">
+  <div class="treatments-container">
+    <!-- Header -->
+    <div class="section-header">
+      <span class="section-badge">Nuestros servicios</span>
+      <h2 class="section-title">Tratamientos de ortodoncia</h2>
+      <p class="section-description">
+        Ofrecemos diferentes opciones de ortodoncia adaptadas a tus necesidades, estilo de vida y presupuesto. Todos nuestros tratamientos incluyen seguimiento profesional.
+      </p>
+    </div>
+
+    <!-- Treatment Cards Grid -->
+    <div class="treatments-grid">
+      <div class="treatment-card" *ngFor="let treatment of treatments" [class.popular]="treatment.popular">
+        <div class="card-badge" *ngIf="treatment.popular">
+          <span class="material-symbols-outlined">star</span>
+          Más elegido
+        </div>
+
+        <div class="card-icon">
+          <span class="material-symbols-outlined">{{ treatment.icon }}</span>
+        </div>
+
+        <h3 class="card-title">{{ treatment.title }}</h3>
+        <p class="card-description">{{ treatment.description }}</p>
+
+        <ul class="card-features">
+          <li *ngFor="let feature of treatment.features">
+            <span class="material-symbols-outlined">check_circle</span>
+            {{ feature }}
+          </li>
+        </ul>
+
+        <a href="#contacto" (click)="scrollToSection($event, 'contacto')" class="card-cta">
+          Agendar consulta
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom Contact -->
+    <div class="treatments-cta">
+      <div class="cta-content">
+        <h3>¿No estás seguro cuál tratamiento es para ti?</h3>
+        <p>Agenda una consulta gratuita y nuestros especialistas te ayudarán a elegir la mejor opción.</p>
+      </div>
+      <a href="#contacto" (click)="scrollToSection($event, 'contacto')" class="btn btn-primary">
+        <span class="material-symbols-outlined">calendar_month</span>
+        Agenda tu consulta gratis
+      </a>
+    </div>
+  </div>
+</section>

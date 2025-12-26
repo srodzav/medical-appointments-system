@@ -1,0 +1,66 @@
+<section class="hero">
+  <div class="hero-container">
+    <!-- Main content -->
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="material-symbols-outlined">stars</span>
+        Tu sonrisa perfecta comienza aquí
+      </div>
+
+      <h1 class="hero-title">
+        Transforma tu sonrisa con
+        <span class="hero-highlight">ortodoncia especializada</span>
+      </h1>
+
+      <p class="hero-description">Tratamientos personalizados con tecnología de vanguardia y profesionales certificados. Primera consulta sin costo.</p>
+
+      <!-- Contact -->
+      <div class="hero-actions">
+        <a href="#contacto" (click)="scrollToSection($event, 'contacto')" class="btn btn-primary">
+          <span class="material-symbols-outlined">calendar_month</span>
+          Agenda tu cita gratuita
+        </a>
+        <a href="#tratamientos" (click)="scrollToSection($event, 'tratamientos')" class="btn btn-secondary">
+          <span class="material-symbols-outlined">info</span>
+          Conoce nuestros tratamientos
+        </a>
+      </div>
+
+      <div class="hero-features">
+        <div class="feature" *ngFor="let feature of features">
+          <span class="material-symbols-outlined">{{ feature.icon }}</span>
+          <span>{{ feature.text }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <div class="image-wrapper">
+        <!-- Placeholder for main -->
+        <div class="image-placeholder">
+          <span class="material-symbols-outlined">sentiment_satisfied</span>
+        </div>
+
+        <!-- Decorative elements -->
+        <div class="decoration decoration-1"></div>
+        <div class="decoration decoration-2"></div>
+
+        <!-- Stats card -->
+        <div class="stats-card">
+          <div class="stat">
+            <span class="stat-number">15+</span>
+            <span class="stat-label">Años de experiencia</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">5,000+</span>
+            <span class="stat-label">Pacientes satisfechos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background decorations -->
+  <div class="hero-bg-decoration hero-bg-1"></div>
+  <div class="hero-bg-decoration hero-bg-2"></div>
+</section>

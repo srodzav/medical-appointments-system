@@ -1,0 +1,105 @@
+<section class="contact" id="contacto">
+  <div class="contact-container">
+    <!-- Header -->
+    <div class="section-header">
+      <span class="section-badge">Contáctanos</span>
+      <h2 class="section-title">Agenda tu cita hoy</h2>
+      <p class="section-description">Estamos listos para ayudarte a lograr la sonrisa que siempre has soñado. Primera consulta completamente gratis.</p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="contact-grid">
+      <!-- Left: Contact Form -->
+      <div class="contact-form-wrapper">
+        <div class="form-card">
+          <h3 class="form-title">Envíanos un mensaje</h3>
+          <p class="form-description">Completa el formulario y nos pondremos en contacto contigo.</p>
+
+          <form class="contact-form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="name">Nombre completo</label>
+              <input type="text" id="name" name="name" [(ngModel)]="formData.name" placeholder="Tu nombre" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" name="phone" [(ngModel)]="formData.phone" placeholder="444 123 4567" required />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" [(ngModel)]="formData.email" placeholder="tu@email.com" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Mensaje</label>
+              <textarea id="message" name="message" [(ngModel)]="formData.message" placeholder="Cuéntanos sobre tu caso o consulta..." rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <span class="material-symbols-outlined">send</span>
+              Enviar mensaje
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Contact Info & Map -->
+      <div class="contact-info-wrapper">
+        <!-- Contact Cards -->
+        <div class="info-cards">
+          <div class="info-card" *ngFor="let info of contactInfo">
+            <div class="info-icon">
+              <span class="material-symbols-outlined">{{ info.icon }}</span>
+            </div>
+            <div class="info-content">
+              <h4 class="info-title">{{ info.title }}</h4>
+              <a [href]="info.link" class="info-main">{{ info.content }}</a>
+              <p class="info-sub">{{ info.subContent }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="schedule-card">
+          <div class="schedule-header">
+            <span class="material-symbols-outlined">schedule</span>
+            <h4>Horarios de atención</h4>
+          </div>
+          <div class="schedule-list">
+            <div class="schedule-item" *ngFor="let item of schedule">
+              <span class="schedule-day">{{ item.day }}</span>
+              <span class="schedule-hours">{{ item.hours }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- WhatsApp contact -->
+        <a href="https://wa.me/524443122257" target="_blank" class="whatsapp-cta">
+          <span class="fab fa-whatsapp"></span>
+          <div class="whatsapp-content">
+            <span class="whatsapp-title">WhatsApp directo</span>
+            <span class="whatsapp-subtitle">Respuesta inmediata</span>
+          </div>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="map-section">
+      <h3 class="map-title">Encuéntranos</h3>
+      <div class="map-wrapper">
+        <!-- Google Maps fake ubication-->
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d923.8500523555466!2d-100.97943773040707!3d22.148832998737216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjLCsDA4JzU1LjgiTiAxMDDCsDU4JzQzLjciVw!5e0!3m2!1ses!2smx!4v1766776049481!5m2!1ses!2smx"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+</section>

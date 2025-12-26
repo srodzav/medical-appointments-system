@@ -1,0 +1,70 @@
+<footer class="footer" role="contentinfo" aria-labelledby="footer-brand">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <!-- Brand -->
+      <div class="footer-about">
+        <a class="logo" href="#" (click)="scrollToTop($event)" aria-label="Inicio">
+          <span class="material-symbols-outlined" aria-hidden="true">health_and_safety</span>
+          <span class="logo-text">demo</span>
+        </a>
+        <p class="lead">Cuidamos tu salud dental con atención profesional y planes accesibles para toda la familia.</p>
+
+        <div class="socials" aria-label="Redes Sociales">
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="social"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
+          <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter" class="social"><span class="fab fa-twitter" aria-hidden="true"></span></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram" class="social"><span class="fab fa-instagram" aria-hidden="true"></span></a>
+        </div>
+      </div>
+
+      <!-- Links columns -->
+      <div class="footer-links">
+        <div class="col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#tratamientos" (click)="scrollToSection($event, 'tratamientos')">Tratamientos</a></li>
+            <li><a href="#beneficios" (click)="scrollToSection($event, 'beneficios')">Beneficios</a></li>
+            <li><a href="#nosotros" (click)="scrollToSection($event, 'nosotros')">Nosotros</a></li>
+            <li><a href="#contacto" (click)="scrollToSection($event, 'contacto')">Contacto</a></li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#" (click)="scrollToTop($event)">Aviso de privacidad</a></li>
+            <li><a href="#" (click)="scrollToTop($event)">Términos y condiciones</a></li>
+            <li><a href="https://sebastianrdz.com" target="_blank" rel="noopener">Desarrollado por sebastianrdz</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Subscribe / Contact -->
+      <div class="footer-subscribe">
+        <h4>Suscríbete</h4>
+        <p>Recibe ofertas y novedades. Sin spam — cancela cuando quieras.</p>
+
+        <form class="subscribe-form" (ngSubmit)="onSubmit()">
+          <input type="email" placeholder="tu@email.com" name="email" [(ngModel)]="email" required />
+          <button type="submit" class="btn">Suscribirme</button>
+        </form>
+
+        <div class="contact">
+          <div>
+            <i class="fab fa-whatsapp" aria-hidden="true"></i>
+            <a href="https://wa.me/524443122257" target="_blank" rel="noopener">&nbsp;&nbsp;444 312 2257</a>
+          </div>
+          <div>
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <a href="mailto:contact@sebatianrdz.com">&nbsp;&nbsp;contact&#64;sebastianrdz.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    ©2025
+    <a target="_blank" href="https://sebastianrdz.com">Sebastian Rodriguez</a>
+    — Todos los derechos reservados.
+  </div>
+</footer>

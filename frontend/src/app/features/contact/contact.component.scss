@@ -1,0 +1,420 @@
+.contact {
+  padding: 80px 0;
+  background: linear-gradient(180deg, #ffffff 0%, var(--light-bg) 100%);
+
+  @media (max-width: 768px) {
+    padding: 50px 0;
+  }
+}
+
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+// Section Header
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 35px;
+  }
+}
+
+.section-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 16px;
+  line-height: 1.2;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 28px;
+  }
+}
+
+.section-description {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-light);
+  max-width: 700px;
+  margin: 0 auto;
+
+  @media (max-width: 576px) {
+    font-size: 16px;
+  }
+}
+
+// Contact Grid
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 60px;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+// Form Wrapper
+.contact-form-wrapper {
+  position: relative;
+}
+
+.form-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  border: 2px solid var(--light-bg);
+
+  @media (max-width: 768px) {
+    padding: 28px 24px;
+  }
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
+}
+
+.form-description {
+  font-size: 15px;
+  color: var(--text-light);
+  margin: 0 0 28px;
+}
+
+// Form
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  input,
+  textarea {
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    outline: none;
+
+    &:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 60, 151, 0.1);
+    }
+
+    &::placeholder {
+      color: #cbd5e1;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(0, 60, 151, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 60, 151, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Contact Info Wrapper
+.contact-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// Info Cards
+.info-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-card {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid var(--light-bg);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(0, 60, 151, 0.1);
+  }
+}
+
+.info-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .material-symbols-outlined {
+    font-size: 24px;
+    color: white;
+  }
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.info-main {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--primary);
+  }
+}
+
+.info-sub {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 0;
+}
+
+// Schedule Card
+.schedule-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 2px solid var(--light-bg);
+}
+
+.schedule-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--primary);
+  }
+
+  h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+  }
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--light-bg);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.schedule-day {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.schedule-hours {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+// WhatsApp CTA
+.whatsapp-cta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+  }
+
+  .fab {
+    font-size: 32px;
+  }
+
+  .material-symbols-outlined {
+    margin-left: auto;
+    font-size: 24px;
+  }
+}
+
+.whatsapp-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.whatsapp-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.whatsapp-subtitle {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+// Map Section
+.map-section {
+  margin-top: 60px;
+
+  @media (max-width: 768px) {
+    margin-top: 40px;
+  }
+}
+
+.map-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  margin: 0 0 30px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+}
+
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  border: 2px solid var(--light-bg);
+
+  @media (max-width: 768px) {
+    height: 350px;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+}

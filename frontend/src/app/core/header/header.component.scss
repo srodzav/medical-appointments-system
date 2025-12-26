@@ -1,0 +1,245 @@
+:host {
+  display: block;
+}
+
+.site-header {
+  background-color: var(--light-bg);
+  padding: 14px 48px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: padding 0.3s ease;
+
+  &.scrolled {
+    padding: 10px 48px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  /* BRAND (logo + burger) */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1001;
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 1002;
+
+      span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background-color: var(--text);
+        transition: all 0.3s ease;
+      }
+
+      &[aria-expanded='true'] span:nth-child(1) {
+        transform: rotate(45deg) translate(7px, 7px);
+      }
+
+      &[aria-expanded='true'] span:nth-child(2) {
+        opacity: 0;
+      }
+
+      &[aria-expanded='true'] span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+    }
+  }
+
+  /* LOGO */
+  .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-transform: lowercase;
+    color: var(--text);
+    gap: 6px;
+
+    .material-symbols-outlined {
+      font-size: 28px;
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    .logo-text {
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+  }
+
+  /* NAVIGATION */
+  .main-nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      gap: 26px;
+      margin: 0;
+      padding: 0;
+
+      .nav-item {
+        .nav-link {
+          text-decoration: none;
+          color: var(--text);
+          font-weight: 500;
+          font-size: 1rem;
+          transition: color 0.2s;
+          padding: 8px 12px;
+          border-radius: 6px;
+          display: block;
+
+          &:hover {
+            color: var(--primary);
+            background-color: rgba(0, 60, 151, 0.05);
+          }
+        }
+      }
+    }
+  }
+
+  /* ACTIONS */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    .phone {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+
+      .material-symbols-outlined {
+        font-size: 18px;
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .cta {
+      background-color: var(--primary);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 16px rgba(0, 60, 151, 0.15);
+      white-space: nowrap;
+
+      &:hover {
+        background-color: #002b73;
+        box-shadow: 0 0 20px rgba(0, 60, 151, 0.3);
+      }
+    }
+  }
+
+  /* OVERLAY */
+  .overlay {
+    display: none;
+  }
+}
+
+/* MANUAL RESPONSIVE */
+
+@media (max-width: 992px) {
+  .site-header {
+    padding: 12px 24px;
+
+    &.scrolled {
+      padding: 10px 24px;
+    }
+
+    .brand .burger {
+      display: flex;
+    }
+
+    .main-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      background-color: var(--light-bg);
+      z-index: 1000;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      padding-top: 80px;
+
+      &.open {
+        transform: translateX(0);
+      }
+
+      .nav-list {
+        flex-direction: column;
+        gap: 0;
+        padding: 10px;
+        color: var(--text);
+
+        .nav-item {
+          border-bottom: 1px solid #f0f0f0;
+
+          .nav-link {
+            padding: 25px;
+            font-size: 1.4rem;
+          }
+        }
+      }
+    }
+
+    .overlay {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 1;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .header-actions .phone {
+      display: none;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

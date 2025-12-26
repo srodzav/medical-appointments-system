@@ -1,0 +1,79 @@
+<section class="about" id="nosotros">
+  <div class="about-container">
+    <!-- Header -->
+    <div class="section-header">
+      <span class="section-badge">Conoce a nuestro equipo</span>
+      <h2 class="section-title">Especialistas comprometidos con tu sonrisa</h2>
+    </div>
+
+    <div class="about-content">
+      <!-- Left: Team Image -->
+      <div class="team-visual">
+        <div class="team-image-wrapper">
+          <!-- Placeholder para foto del equipo -->
+          <div class="team-image-placeholder">
+            <div class="team-members">
+              <div class="member-icon" *ngFor="let member of team; let i = index" [style.animation-delay.s]="i * 0.2">
+                <span class="material-symbols-outlined">{{ member.image }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decorative badge -->
+          <div class="experience-badge">
+            <div class="badge-content">
+              <span class="badge-number">15+</span>
+              <span class="badge-text">Años de experiencia</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Content -->
+      <div class="team-info">
+        <h3 class="info-title">Tu sonrisa en manos expertas</h3>
+        <p class="info-description">
+          Somos un equipo de ortodoncistas especializados apasionados por transformar sonrisas y mejorar la calidad de vida de nuestros pacientes. Con más de 15 años de experiencia, combinamos
+          técnicas tradicionales probadas con tecnología de vanguardia.
+        </p>
+        <p class="info-description">
+          Cada miembro de nuestro equipo está certificado y se mantiene en constante actualización para brindarte los mejores tratamientos disponibles. Creemos que una sonrisa saludable es la puerta a
+          una vida más segura y feliz.
+        </p>
+
+        <!-- Credentials List -->
+        <div class="credentials-list">
+          <div class="credential-item" *ngFor="let credential of credentials">
+            <span class="material-symbols-outlined">{{ credential.icon }}</span>
+            <span>{{ credential.text }}</span>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="info-cta">
+          <a href="#contacto" (click)="scrollToSection($event, 'contacto')" class="btn btn-primary">
+            <span class="material-symbols-outlined">calendar_month</span>
+            Conoce a nuestro equipo
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Members Cards -->
+    <div class="team-members-section">
+      <h3 class="members-title">Nuestros especialistas</h3>
+      <div class="team-grid">
+        <div class="team-card" *ngFor="let member of team">
+          <div class="card-avatar">
+            <span class="material-symbols-outlined">{{ member.image }}</span>
+          </div>
+          <div class="card-info">
+            <h4 class="member-name">{{ member.name }}</h4>
+            <p class="member-role">{{ member.role }}</p>
+            <p class="member-credentials">{{ member.credentials }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
