@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   scrolled = false;
   private scrollSub?: Subscription;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, public authService: AuthService) {}
+
+  get isLoggedIn$() {
+    return this.authService.isLoggedIn$;
+  }
 
   ngOnInit(): void {
     // detecta scroll para compactar header (solo en browser)

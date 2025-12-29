@@ -32,7 +32,11 @@
         444 312 2257
       </a>
 
-      <a class="cta" href="#contacto" (click)="scrollToSection($event, 'contacto')">Agenda gratis</a>
+      <!-- Show Dashboard if logged in, otherwise Login -->
+      <a *ngIf="isLoggedIn$ | async; else loginLink" class="cta" routerLink="/dashboard">Dashboard</a>
+      <ng-template #loginLink>
+        <a class="cta" routerLink="/login">Iniciar sesión</a>
+      </ng-template>
     </div>
   </div>
 
