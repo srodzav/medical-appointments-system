@@ -9,17 +9,31 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.getToken();
 
-  // Clone request and add authorization header if token exists
+  // Clone request with credentials and headers
+  let clonedReq = req.clone({
+    withCredentials: true, // Important for CORS with cookies
+  });
+
+  // Add authorization header if token exists
   if (token) {
-    req = req.clone({
+    clonedReq = clonedReq.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+  } else {
+    clonedReq = clonedReq.clone({
+      setHeaders: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
   }
 
   // Handle response errors
-  return next(req).pipe(
+  return next(clonedReq).pipe(
     catchError((error) => {
       // If 401 Unauthorized, logout and redirect to login
       if (error.status === 401) {
