@@ -25,6 +25,7 @@ export class CreateComponent implements OnInit {
   selectedPatientId: number | null = null;
 
   treatments = [
+    { value: 'consulta_general', label: 'Consulta General' },
     { value: 'brackets_metalicos', label: 'Brackets Metálicos' },
     { value: 'brackets_esteticos', label: 'Brackets Estéticos' },
     { value: 'ortodoncia_invisible', label: 'Ortodoncia Invisible' },
@@ -51,6 +52,11 @@ export class CreateComponent implements OnInit {
         .get(fieldName)
         ?.valueChanges.pipe(debounceTime(400), distinctUntilChanged())
         .subscribe((value) => {
+          // Don't search if patient is already selected
+          if (this.selectedPatientId) {
+            return;
+          }
+
           if (value && value.toString().length >= 3) {
             this.searchPatients(value);
           } else {

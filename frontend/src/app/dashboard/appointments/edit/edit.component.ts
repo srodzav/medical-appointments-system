@@ -27,15 +27,11 @@ export class EditComponent implements OnInit {
   selectedPatientId: number | null = null;
 
   treatments = [
+    { value: 'consulta_general', label: 'Consulta General' },
     { value: 'brackets_metalicos', label: 'Brackets Metálicos' },
     { value: 'brackets_esteticos', label: 'Brackets Estéticos' },
     { value: 'ortodoncia_invisible', label: 'Ortodoncia Invisible' },
     { value: 'ortodoncia_infantil', label: 'Ortodoncia Infantil' },
-    { value: 'ortodoncia', label: 'Ortodoncia' },
-    { value: 'brackets', label: 'Brackets' },
-    { value: 'invisalign', label: 'Invisalign' },
-    { value: 'retenedores', label: 'Retenedores' },
-    { value: 'consulta', label: 'Consulta General' },
   ];
 
   constructor(private fb: FormBuilder, private appointmentService: AppointmentService, private patientService: PatientService, private router: Router, private route: ActivatedRoute) {
@@ -65,6 +61,11 @@ export class EditComponent implements OnInit {
         .get(fieldName)
         ?.valueChanges.pipe(debounceTime(400), distinctUntilChanged())
         .subscribe((value) => {
+          // Don't search if patient is already selected
+          if (this.selectedPatientId) {
+            return;
+          }
+
           if (value && value.toString().length >= 3) {
             this.searchPatients(value);
           } else {
