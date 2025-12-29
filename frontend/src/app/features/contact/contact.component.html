@@ -34,13 +34,35 @@
             </div>
 
             <div class="form-group">
+              <label for="treatment">Tipo de tratamiento</label>
+              <select id="treatment" name="treatment" [(ngModel)]="formData.treatment" required>
+                <option *ngFor="let treatment of treatments" [value]="treatment.value">
+                  {{ treatment.label }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
               <label for="message">Mensaje</label>
               <textarea id="message" name="message" [(ngModel)]="formData.message" placeholder="Cuéntanos sobre tu caso o consulta..." rows="4" required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">
-              <span class="material-symbols-outlined">send</span>
-              Enviar mensaje
+            <!-- Success Message -->
+            <div class="alert alert-success" *ngIf="showSuccessMessage">
+              <span class="material-symbols-outlined">check_circle</span>
+              <span>¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.</span>
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-error" *ngIf="showErrorMessage">
+              <span class="material-symbols-outlined">error</span>
+              <span>Hubo un error al enviar tu mensaje. Por favor intenta nuevamente.</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+              <span class="material-symbols-outlined" *ngIf="!isSubmitting">send</span>
+              <span class="material-symbols-outlined spinning" *ngIf="isSubmitting">progress_activity</span>
+              {{ isSubmitting ? 'Enviando...' : 'Enviar mensaje' }}
             </button>
           </form>
         </div>
@@ -48,6 +70,16 @@
 
       <!-- Right: Contact Info & Map -->
       <div class="contact-info-wrapper">
+        <!-- WhatsApp contact -->
+        <a href="https://wa.me/524443122257" target="_blank" class="whatsapp-cta">
+          <span class="fab fa-whatsapp"></span>
+          <div class="whatsapp-content">
+            <span class="whatsapp-title">WhatsApp directo</span>
+            <span class="whatsapp-subtitle">Respuesta inmediata</span>
+          </div>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+
         <!-- Contact Cards -->
         <div class="info-cards">
           <div class="info-card" *ngFor="let info of contactInfo">
@@ -75,16 +107,6 @@
             </div>
           </div>
         </div>
-
-        <!-- WhatsApp contact -->
-        <a href="https://wa.me/524443122257" target="_blank" class="whatsapp-cta">
-          <span class="fab fa-whatsapp"></span>
-          <div class="whatsapp-content">
-            <span class="whatsapp-title">WhatsApp directo</span>
-            <span class="whatsapp-subtitle">Respuesta inmediata</span>
-          </div>
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </a>
       </div>
     </div>
 

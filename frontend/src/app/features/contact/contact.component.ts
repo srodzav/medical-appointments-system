@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AppointmentService } from '../../services/appointment.service';
 
 @Component({
   selector: 'app-contact',
@@ -11,12 +12,25 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './contact.component.scss',
 })
 export class ContactComponent {
+  constructor(private appointmentService: AppointmentService) {}
   formData = {
     name: '',
     phone: '',
     email: '',
+    treatment: 'consulta_general',
     message: '',
+    appointment_date: '',
   };
+
+  treatments = [
+    { value: 'consulta_general', label: 'Consulta General' },
+    { value: 'ortodoncia', label: 'Ortodoncia' },
+    { value: 'brackets', label: 'Brackets' },
+  ];
+
+  isSubmitting = false;
+  showSuccessMessage = false;
+  showErrorMessage = false;
 
   schedule = [
     { day: 'Lunes - Viernes', hours: '9:00 AM - 7:00 PM' },
@@ -49,10 +63,39 @@ export class ContactComponent {
   ];
 
   onSubmit() {
-    console.log('Form submitted:', this.formData);
-    // forms logic to send email
-    alert('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
-    this.resetForm();
+    if (this.isSubmitting) return;
+
+    this.isSubmitting = true;
+    this.showSuccessMessage = false;
+    this.showErrorMessage = false;
+
+    const appointmentData = {
+      patient_name: this.formData.name,
+      patient_email: this.formData.email,
+      patient_phone: this.formData.phone,
+      treatment_type: this.formData.treatment,
+      notes: this.formData.message,
+      appointment_date: this.formData.appointment_date,
+    };
+
+    this.appointmentService.createPublic(appointmentData).subscribe({
+      next: (response) => {
+        this.showSuccessMessage = true;
+        this.resetForm();
+        this.isSubmitting = false;
+        setTimeout(() => {
+          this.showSuccessMessage = false;
+        }, 5000);
+      },
+      error: (error) => {
+        console.error('Error al enviar solicitud:', error);
+        this.showErrorMessage = true;
+        this.isSubmitting = false;
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 5000);
+      },
+    });
   }
 
   resetForm() {
@@ -60,7 +103,9 @@ export class ContactComponent {
       name: '',
       phone: '',
       email: '',
+      treatment: 'consulta_general',
       message: '',
+      appointment_date: '',
     };
   }
 }
