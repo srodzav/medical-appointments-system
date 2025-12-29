@@ -30,10 +30,43 @@
         </div>
 
         <div class="form-row">
-          <div class="form-group">
+          <div class="form-group autocomplete-wrapper">
             <label for="patient_email">Correo Electrónico *</label>
-            <input type="email" id="patient_email" formControlName="patient_email" placeholder="juan@example.com" [class.error]="patient_email?.invalid && patient_email?.touched" />
-            @if (patient_email?.invalid && patient_email?.touched) {
+            <div class="input-with-icon">
+              <input
+                type="email"
+                id="patient_email"
+                formControlName="patient_email"
+                placeholder="juan@example.com"
+                [class.error]="patient_email?.invalid && patient_email?.touched"
+                (focus)="showSuggestions = patientSuggestions.length > 0"
+                (input)="clearSelection()" />
+              @if (searchingPatient) {
+              <span class="material-symbols-outlined searching">progress_activity</span>
+              } @if (selectedPatientId) {
+              <span class="material-symbols-outlined success-icon">check_circle</span>
+              }
+            </div>
+
+            <!-- Autocomplete Suggestions -->
+            @if (showSuggestions && patientSuggestions.length > 0) {
+            <div class="suggestions-dropdown">
+              <div class="suggestions-header">
+                <span class="material-symbols-outlined">group</span>
+                <span>Pacientes encontrados</span>
+              </div>
+              @for (patient of patientSuggestions; track patient.id) {
+              <button type="button" class="suggestion-item" (click)="selectPatient(patient)">
+                <div class="patient-avatar-small">{{ patient.name.charAt(0).toUpperCase() }}</div>
+                <div class="patient-details">
+                  <strong>{{ patient.name }}</strong>
+                  <span class="patient-contact">{{ patient.email }} • {{ patient.phone }}</span>
+                </div>
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+              }
+            </div>
+            } @if (patient_email?.invalid && patient_email?.touched) {
             <span class="error-message">@if (patient_email?.errors?.['required']) { El correo es requerido } @else if (patient_email?.errors?.['email']) { Ingresa un correo válido }</span>
             }
           </div>

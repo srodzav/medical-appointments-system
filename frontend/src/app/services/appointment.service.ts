@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface Appointment {
   id?: number;
   user_id?: number | null;
+  patient_id?: number | null;
   patient_name: string;
   patient_email: string;
   patient_phone: string;
@@ -16,6 +17,7 @@ export interface Appointment {
   created_at?: string;
   updated_at?: string;
   user?: any;
+  patient?: any;
 }
 
 export interface AppointmentFilters {

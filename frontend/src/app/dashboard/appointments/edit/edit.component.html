@@ -1,0 +1,143 @@
+<div class="edit-appointment">
+  <div class="page-header">
+    <h1>Editar Cita</h1>
+    <a routerLink="/dashboard/citas" class="back-link">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Volver a citas
+    </a>
+  </div>
+
+  @if (loadingAppointment) {
+  <div class="loading">
+    <span class="material-symbols-outlined spinning">progress_activity</span>
+    Cargando cita...
+  </div>
+  } @else {
+  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="appointment-form">
+    @if (errorMessage) {
+    <div class="error-message">
+      <span class="material-symbols-outlined">error</span>
+      {{ errorMessage }}
+    </div>
+    } @if (!appointment_date?.value) {
+    <div class="info-message">
+      <span class="material-symbols-outlined">info</span>
+      Esta cita aún no tiene fecha agendada. Por favor, selecciona una fecha y hora.
+    </div>
+    }
+
+    <div class="form-section">
+      <h3>Información del Paciente</h3>
+
+      <div class="form-group autocomplete-wrapper">
+        <label for="patient_name">Nombre completo *</label>
+        <input
+          type="text"
+          id="patient_name"
+          formControlName="patient_name"
+          (focus)="showSuggestions = patientSuggestions.length > 0"
+          (blur)="hideSuggestionsWithDelay()"
+          placeholder="Escribe nombre, email o teléfono..."
+          [class.invalid]="patient_name?.invalid && patient_name?.touched" />
+
+        @if (showSuggestions && patientSuggestions.length > 0) {
+        <div class="suggestions-dropdown">
+          @for (patient of patientSuggestions; track patient.id) {
+          <div class="suggestion-item" (click)="selectPatient(patient)">
+            <div class="patient-avatar">{{ patient.name.charAt(0).toUpperCase() }}</div>
+            <div class="patient-info">
+              <div class="patient-name">{{ patient.name }}</div>
+              <div class="patient-details">{{ patient.email }} • {{ patient.phone }}</div>
+            </div>
+          </div>
+          }
+        </div>
+        } @if (selectedPatientId) {
+        <div class="selected-patient">
+          <span class="material-symbols-outlined">check_circle</span>
+          Paciente existente seleccionado
+          <button type="button" class="clear-btn" (click)="clearSelection()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        } @if (patient_name?.invalid && patient_name?.touched) {
+        <span class="error-text">@if (patient_name?.errors?.['required']) { El nombre es requerido } @if (patient_name?.errors?.['minlength']) { Mínimo 3 caracteres }</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="patient_email">Email *</label>
+        <input
+          type="email"
+          id="patient_email"
+          formControlName="patient_email"
+          (focus)="showSuggestions = patientSuggestions.length > 0"
+          (blur)="hideSuggestionsWithDelay()"
+          placeholder="ejemplo@correo.com"
+          [class.invalid]="patient_email?.invalid && patient_email?.touched" />
+        @if (patient_email?.invalid && patient_email?.touched) {
+        <span class="error-text">@if (patient_email?.errors?.['required']) { El email es requerido } @if (patient_email?.errors?.['email']) { Email inválido }</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="patient_phone">Teléfono *</label>
+        <input
+          type="tel"
+          id="patient_phone"
+          formControlName="patient_phone"
+          (focus)="showSuggestions = patientSuggestions.length > 0"
+          (blur)="hideSuggestionsWithDelay()"
+          placeholder="1234567890"
+          [class.invalid]="patient_phone?.invalid && patient_phone?.touched" />
+        @if (patient_phone?.invalid && patient_phone?.touched) {
+        <span class="error-text">@if (patient_phone?.errors?.['required']) { El teléfono es requerido } @if (patient_phone?.errors?.['pattern']) { Debe ser un teléfono de 10 dígitos }</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Detalles de la Cita</h3>
+
+      <div class="form-group">
+        <label for="treatment_type">Tipo de tratamiento *</label>
+        <select id="treatment_type" formControlName="treatment_type" [class.invalid]="treatment_type?.invalid && treatment_type?.touched">
+          <option value="">Selecciona un tratamiento</option>
+          @for (treatment of treatments; track treatment.value) {
+          <option [value]="treatment.value">{{ treatment.label }}</option>
+          }
+        </select>
+        @if (treatment_type?.invalid && treatment_type?.touched) {
+        <span class="error-text">Selecciona un tratamiento</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="appointment_date">
+          Fecha y hora de la cita @if (!appointment_date?.value) {
+          <span class="optional-label">(Pendiente)</span>
+          }
+        </label>
+        <input type="datetime-local" id="appointment_date" formControlName="appointment_date" />
+        <small class="form-hint">Deja vacío si aún no se ha agendado la cita</small>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notas adicionales</label>
+        <textarea id="notes" formControlName="notes" rows="4" placeholder="Información adicional sobre la cita..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" routerLink="/dashboard/citas" class="btn-secondary">Cancelar</button>
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        @if (isLoading) {
+        <span class="material-symbols-outlined spinning">progress_activity</span>
+        Guardando... } @else {
+        <span class="material-symbols-outlined">save</span>
+        Guardar cambios }
+      </button>
+    </div>
+  </form>
+  }
+</div>

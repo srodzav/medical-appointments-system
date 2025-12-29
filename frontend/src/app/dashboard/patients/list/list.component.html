@@ -1,0 +1,90 @@
+<div class="patients-list">
+  <div class="page-header">
+    <h1>Pacientes</h1>
+    <p>Gestiona la base de datos de pacientes y su historial de citas</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Buscar por nombre, email o teléfono..." />
+    </div>
+    <button class="btn-primary" (click)="onSearch()">
+      <span class="material-symbols-outlined">search</span>
+      Buscar
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <span class="material-symbols-outlined spinning">progress_activity</span>
+    <p>Cargando pacientes...</p>
+  </div>
+
+  <!-- Patients Table -->
+  <div *ngIf="!loading" class="table-container">
+    <div *ngIf="patients.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">group_off</span>
+      <h3>No se encontraron pacientes</h3>
+      <p *ngIf="searchQuery">Intenta con otro término de búsqueda</p>
+      <p *ngIf="!searchQuery">Los pacientes se crearán automáticamente al registrar citas</p>
+    </div>
+
+    <table *ngIf="patients.length > 0">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Contacto</th>
+          <th>Citas</th>
+          <th>Última cita</th>
+          <th>Registro</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of patients">
+          <td>
+            <div class="patient-info">
+              <div class="avatar">{{ patient.name.charAt(0).toUpperCase() }}</div>
+              <strong>{{ patient.name }}</strong>
+            </div>
+          </td>
+          <td>
+            <div class="contact-info">
+              <span>{{ patient.email }}</span>
+              <span class="phone">{{ patient.phone }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="badge badge-info">{{ patient.appointments_count || 0 }} citas</span>
+          </td>
+          <td>
+            <span *ngIf="patient.latest_appointment" class="date">
+              {{ patient.latest_appointment.appointment_date | date : 'dd/MM/yyyy' }}
+            </span>
+            <span *ngIf="!patient.latest_appointment" class="text-muted">Sin citas</span>
+          </td>
+          <td>
+            <span class="date-small">{{ patient.created_at | date : 'dd/MM/yyyy' }}</span>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="btn-icon" [routerLink]="['/dashboard/pacientes', patient.id]" title="Ver historial">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+              <button class="btn-icon danger" (click)="deletePatient(patient)" title="Eliminar" *ngIf="!patient.appointments_count || patient.appointments_count === 0">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination Info -->
+    <div *ngIf="patients.length > 0" class="pagination-info">
+      <p>Mostrando {{ patients.length }} de {{ total }} pacientes</p>
+    </div>
+  </div>
+</div>
