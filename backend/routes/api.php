@@ -8,6 +8,7 @@ use App\Http\Controllers\AppointmentController;
 // Public routes
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/appointments/public', [AppointmentController::class, 'storePublic']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {

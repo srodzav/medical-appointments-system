@@ -9,12 +9,54 @@ use Illuminate\Support\Facades\Validator;
 class AppointmentController extends Controller
 {
     /**
+     * Store appointment from public form (no authentication required)
+     */
+    public function storePublic(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patient_name' => 'required|string|max:255',
+            'patient_email' => 'required|email|max:255',
+            'patient_phone' => 'required|string|max:20',
+            'treatment_type' => 'required|string',
+            // appointment_date is optional for public requests (user may only request info)
+            'appointment_date' => 'nullable|date|after:now',
+            'notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Create appointment without user_id (public request)
+        $appointment = Appointment::create([
+            'user_id' => null, // No user associated yet
+            'patient_name' => $request->patient_name,
+            'patient_email' => $request->patient_email,
+            'patient_phone' => $request->patient_phone,
+            'treatment_type' => $request->treatment_type,
+            'appointment_date' => $request->appointment_date ?? null,
+            'notes' => $request->notes,
+            'status' => 'pending',
+        ]);
+
+        // TODO: Send email notification to admin
+
+        return response()->json([
+            'message' => 'Solicitud de cita recibida. Te contactaremos pronto.',
+            'appointment' => $appointment,
+        ], 201);
+    }
+
+    /**
      * Display a listing of appointments
      */
     public function index(Request $request)
     {
-        $query = Appointment::with('user')
-            ->where('user_id', $request->user()->id);
+        // Admin sees all appointments (including public ones)
+        $query = Appointment::with('user');
 
         // Filter by status
         if ($request->has('status')) {
@@ -43,7 +85,7 @@ class AppointmentController extends Controller
             'patient_name' => 'required|string|max:255',
             'patient_email' => 'required|email|max:255',
             'patient_phone' => 'required|string|max:20',
-            'treatment_type' => 'required|in:brackets_metalicos,brackets_esteticos,ortodoncia_invisible,ortodoncia_infantil',
+            'treatment_type' => 'required|string',
             'appointment_date' => 'required|date|after:now',
             'notes' => 'nullable|string',
         ]);
@@ -105,7 +147,7 @@ class AppointmentController extends Controller
             'patient_name' => 'sometimes|required|string|max:255',
             'patient_email' => 'sometimes|required|email|max:255',
             'patient_phone' => 'sometimes|required|string|max:20',
-            'treatment_type' => 'sometimes|required|in:brackets_metalicos,brackets_esteticos,ortodoncia_invisible,ortodoncia_infantil',
+            'treatment_type' => 'sometimes|required|string',
             'appointment_date' => 'sometimes|required|date',
             'notes' => 'nullable|string',
             'status' => 'sometimes|required|in:pending,confirmed,cancelled,completed',

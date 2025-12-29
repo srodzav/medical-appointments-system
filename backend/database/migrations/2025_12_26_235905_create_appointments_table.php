@@ -13,17 +13,20 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('patient_name');
             $table->string('patient_email');
             $table->string('patient_phone');
             $table->enum('treatment_type', [
+                'consulta_general',
+                'brackets',
                 'brackets_metalicos',
                 'brackets_esteticos',
+                'ortodoncia',
                 'ortodoncia_invisible',
-                'ortodoncia_infantil'
+                'ortodoncia_infantil',
             ]);
-            $table->dateTime('appointment_date');
+            $table->dateTime('appointment_date')->nullable();
             $table->text('notes')->nullable();
             $table->enum('status', ['pending', 'confirmed', 'cancelled', 'completed'])->default('pending');
             $table->string('google_calendar_event_id')->nullable();
