@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,9 +31,26 @@ class AppointmentController extends Controller
             ], 422);
         }
 
-        // Create appointment without user_id (public request)
+        // Find or create patient
+        $patient = Patient::where('email', $request->patient_email)->first();
+        
+        if (!$patient) {
+            $patient = Patient::create([
+                'name' => $request->patient_name,
+                'email' => $request->patient_email,
+                'phone' => $request->patient_phone,
+            ]);
+        } else {
+            // Update phone if different
+            if ($patient->phone !== $request->patient_phone) {
+                $patient->update(['phone' => $request->patient_phone]);
+            }
+        }
+
+        // Create appointment linked to patient
         $appointment = Appointment::create([
-            'user_id' => null, // No user associated yet
+            'user_id' => null, // No admin user associated yet
+            'patient_id' => $patient->id,
             'patient_name' => $request->patient_name,
             'patient_email' => $request->patient_email,
             'patient_phone' => $request->patient_phone,
@@ -46,7 +64,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'message' => 'Solicitud de cita recibida. Te contactaremos pronto.',
-            'appointment' => $appointment,
+            'appointment' => $appointment->load('patient'),
         ], 201);
     }
 
@@ -56,7 +74,7 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         // Admin sees all appointments (including public ones)
-        $query = Appointment::with('user');
+        $query = Appointment::with(['user', 'patient']);
 
         // Filter by status
         if ($request->has('status')) {
@@ -82,6 +100,7 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'patient_id' => 'nullable|exists:patients,id',
             'patient_name' => 'required|string|max:255',
             'patient_email' => 'required|email|max:255',
             'patient_phone' => 'required|string|max:20',
@@ -97,8 +116,26 @@ class AppointmentController extends Controller
             ], 422);
         }
 
+        // If patient_id provided, use it; otherwise find or create patient
+        $patientId = $request->patient_id;
+        
+        if (!$patientId) {
+            $patient = Patient::where('email', $request->patient_email)->first();
+            
+            if (!$patient) {
+                $patient = Patient::create([
+                    'name' => $request->patient_name,
+                    'email' => $request->patient_email,
+                    'phone' => $request->patient_phone,
+                ]);
+            }
+            
+            $patientId = $patient->id;
+        }
+
         $appointment = Appointment::create([
             'user_id' => $request->user()->id,
+            'patient_id' => $patientId,
             'patient_name' => $request->patient_name,
             'patient_email' => $request->patient_email,
             'patient_phone' => $request->patient_phone,
@@ -110,7 +147,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'message' => 'Cita creada exitosamente',
-            'appointment' => $appointment->load('user'),
+            'appointment' => $appointment->load(['user', 'patient']),
         ], 201);
     }
 
@@ -119,15 +156,15 @@ class AppointmentController extends Controller
      */
     public function show(Request $request, Appointment $appointment)
     {
-        // Check ownership
-        if ($appointment->user_id !== $request->user()->id) {
+        // Allow any admin to view public appointments (user_id = null)
+        if ($appointment->user_id !== null && $appointment->user_id !== $request->user()->id) {
             return response()->json([
                 'message' => 'No autorizado'
             ], 403);
         }
 
         return response()->json([
-            'appointment' => $appointment->load('user'),
+            'appointment' => $appointment->load(['user', 'patient']),
         ]);
     }
 
@@ -136,8 +173,8 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, Appointment $appointment)
     {
-        // Check ownership
-        if ($appointment->user_id !== $request->user()->id) {
+        // Allow any admin to update public appointments (user_id = null)
+        if ($appointment->user_id !== null && $appointment->user_id !== $request->user()->id) {
             return response()->json([
                 'message' => 'No autorizado'
             ], 403);
@@ -172,7 +209,7 @@ class AppointmentController extends Controller
 
         return response()->json([
             'message' => 'Cita actualizada exitosamente',
-            'appointment' => $appointment->fresh()->load('user'),
+            'appointment' => $appointment->fresh()->load(['user', 'patient']),
         ]);
     }
 
@@ -181,8 +218,8 @@ class AppointmentController extends Controller
      */
     public function destroy(Request $request, Appointment $appointment)
     {
-        // Check ownership
-        if ($appointment->user_id !== $request->user()->id) {
+        // Allow any admin to delete public appointments (user_id = null)
+        if ($appointment->user_id !== null && $appointment->user_id !== $request->user()->id) {
             return response()->json([
                 'message' => 'No autorizado'
             ], 403);
@@ -200,7 +237,9 @@ class AppointmentController extends Controller
      */
     public function confirm(Request $request, Appointment $appointment)
     {
-        if ($appointment->user_id !== $request->user()->id) {
+        // Allow any admin to confirm public appointments (user_id = null)
+        // Only the creator can confirm their own appointments
+        if ($appointment->user_id !== null && $appointment->user_id !== $request->user()->id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -217,7 +256,9 @@ class AppointmentController extends Controller
      */
     public function cancel(Request $request, Appointment $appointment)
     {
-        if ($appointment->user_id !== $request->user()->id) {
+        // Allow any admin to cancel public appointments (user_id = null)
+        // Only the creator can cancel their own appointments
+        if ($appointment->user_id !== null && $appointment->user_id !== $request->user()->id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -234,7 +275,9 @@ class AppointmentController extends Controller
      */
     public function reschedule(Request $request, Appointment $appointment)
     {
-        if ($appointment->user_id !== $request->user()->id) {
+        // Allow any admin to reschedule public appointments (user_id = null)
+        // Only the creator can reschedule their own appointments
+        if ($appointment->user_id !== null && $appointment->user_id !== $request->user()->id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 

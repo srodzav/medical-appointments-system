@@ -91,12 +91,19 @@
             </span>
           </td>
           <td>
+            @if (appointment.appointment_date) {
             <div class="date-info">
               <span class="material-symbols-outlined">calendar_today</span>
               {{ appointment.appointment_date | date : 'dd/MM/yyyy' }}
               <br />
               <small>{{ appointment.appointment_date | date : 'HH:mm' }}</small>
             </div>
+            } @else {
+            <div class="pending-date">
+              <span class="material-symbols-outlined">schedule</span>
+              <span class="pending-text">Pendiente por agendar</span>
+            </div>
+            }
           </td>
           <td>
             <span class="status-badge" [ngClass]="getStatusClass(appointment.status!)">
@@ -105,6 +112,14 @@
           </td>
           <td>
             <div class="actions">
+              @if (!appointment.appointment_date) {
+              <button [routerLink]="['/dashboard/citas/editar', appointment.id]" class="action-btn schedule-btn" title="Agendar fecha">
+                <span class="material-symbols-outlined">calendar_add_on</span>
+              </button>
+              }
+              <button [routerLink]="['/dashboard/citas/editar', appointment.id]" class="action-btn edit-btn" title="Editar">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
               @if (appointment.status === 'pending') {
               <button (click)="confirmAppointment(appointment.id!)" class="action-btn confirm-btn" title="Confirmar">
                 <span class="material-symbols-outlined">check_circle</span>

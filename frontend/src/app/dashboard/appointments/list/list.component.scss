@@ -278,6 +278,28 @@
   }
 }
 
+.pending-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #fff7ed;
+  border: 2px dashed #fb923c;
+  border-radius: 8px;
+  color: #ea580c;
+  font-weight: 600;
+  font-size: 0.85rem;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+    color: #f97316;
+  }
+
+  .pending-text {
+    white-space: nowrap;
+  }
+}
+
 .status-badge {
   display: inline-block;
   padding: 0.5rem 1rem;
@@ -335,6 +357,25 @@
 
     &:hover {
       background: #a7f3d0;
+    }
+  }
+
+  &.schedule-btn {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 2px solid #fb923c;
+
+    &:hover {
+      background: #fed7aa;
+    }
+  }
+
+  &.edit-btn {
+    background: #dbeafe;
+    color: #1e40af;
+
+    &:hover {
+      background: #bfdbfe;
     }
   }
 

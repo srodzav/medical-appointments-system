@@ -7,6 +7,9 @@ import { LayoutComponent } from './dashboard/layout/layout.component';
 import { HomeComponent } from './dashboard/home/home.component';
 import { ListComponent } from './dashboard/appointments/list/list.component';
 import { CreateComponent } from './dashboard/appointments/create/create.component';
+import { EditComponent } from './dashboard/appointments/edit/edit.component';
+import { ListComponent as PatientsListComponent } from './dashboard/patients/list/list.component';
+import { DetailComponent as PatientDetailComponent } from './dashboard/patients/detail/detail.component';
 
 export const routes: Routes = [
   // Public routes
@@ -23,6 +26,9 @@ export const routes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'citas', component: ListComponent },
       { path: 'citas/nueva', component: CreateComponent },
+      { path: 'citas/editar/:id', component: EditComponent },
+      { path: 'pacientes', component: PatientsListComponent },
+      { path: 'pacientes/:id', component: PatientDetailComponent },
     ],
   },
 

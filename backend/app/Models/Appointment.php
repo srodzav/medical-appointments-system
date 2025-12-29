@@ -11,6 +11,7 @@ class Appointment extends Model
 
     protected $fillable = [
         'user_id',
+        'patient_id',
         'patient_name',
         'patient_email',
         'patient_phone',
@@ -29,6 +30,11 @@ class Appointment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
     }
 
     // Scopes

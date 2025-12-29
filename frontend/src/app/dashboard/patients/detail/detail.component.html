@@ -1,0 +1,103 @@
+<div class="patient-detail">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <span class="material-symbols-outlined spinning">progress_activity</span>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Patient Info -->
+  <div *ngIf="!loading && patient">
+    <!-- Header with back button -->
+    <div class="page-header">
+      <button class="btn-back" routerLink="/dashboard/pacientes">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver
+      </button>
+    </div>
+
+    <!-- Patient Card -->
+    <div class="patient-card">
+      <div class="patient-avatar">
+        {{ patient.name.charAt(0).toUpperCase() }}
+      </div>
+      <div class="patient-info">
+        <h1>{{ patient.name }}</h1>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="material-symbols-outlined">email</span>
+            <a [href]="'mailto:' + patient.email">{{ patient.email }}</a>
+          </div>
+          <div class="info-item">
+            <span class="material-symbols-outlined">call</span>
+            <a [href]="'tel:' + patient.phone">{{ patient.phone }}</a>
+          </div>
+          <div class="info-item">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span>Registro: {{ patient.created_at | date : 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="material-symbols-outlined">event</span>
+            <span>{{ patient.appointments?.length || 0 }} citas registradas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appointments History -->
+    <div class="appointments-section">
+      <h2>Historial de Citas</h2>
+
+      <div *ngIf="!patient.appointments || patient.appointments.length === 0" class="empty-state">
+        <span class="material-symbols-outlined">event_busy</span>
+        <p>Este paciente aún no tiene citas registradas</p>
+      </div>
+
+      <div *ngIf="patient.appointments && patient.appointments.length > 0" class="appointments-list">
+        <div class="appointment-card" *ngFor="let appointment of patient.appointments">
+          <div class="appointment-header">
+            <span [class]="'status-badge ' + getStatusClass(appointment.status)">
+              {{ getStatusText(appointment.status) }}
+            </span>
+            <span class="appointment-date">
+              <span class="material-symbols-outlined">calendar_month</span>
+              {{ appointment.appointment_date | date : 'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+
+          <div class="appointment-body">
+            <div class="appointment-info">
+              <div class="info-row">
+                <span class="material-symbols-outlined">medical_services</span>
+                <span>
+                  <strong>Tratamiento:</strong>
+                  {{ getTreatmentText(appointment.treatment_type) }}
+                </span>
+              </div>
+              <div class="info-row" *ngIf="appointment.notes">
+                <span class="material-symbols-outlined">note</span>
+                <span>
+                  <strong>Notas:</strong>
+                  {{ appointment.notes }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="appointment-footer">
+            <button class="btn-sm" [routerLink]="['/dashboard/citas']">
+              Ver en citas
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="!loading && !patient" class="error-state">
+    <span class="material-symbols-outlined">error</span>
+    <h3>Paciente no encontrado</h3>
+    <button class="btn-primary" routerLink="/dashboard/pacientes">Volver a pacientes</button>
+  </div>
+</div>
