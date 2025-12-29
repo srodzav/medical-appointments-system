@@ -15,3 +15,5 @@ backend/node_modules/
 
 # Otros
 .DS_Store
+DEPLOYMENT.md
+CONTEXT.md
