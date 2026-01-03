@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('appointments', AppointmentController::class);
     
     // Additional appointment actions
+    Route::get('/appointments-weekly-calendar', [AppointmentController::class, 'weeklyCalendar']);
     Route::post('/appointments/{appointment}/confirm', [AppointmentController::class, 'confirm']);
     Route::post('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
     Route::post('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule']);

@@ -10,6 +10,34 @@ use Illuminate\Support\Facades\Validator;
 class AppointmentController extends Controller
 {
     /**
+     * Check if there's a time conflict with existing appointments
+     */
+    private function hasTimeConflict($appointmentDate, $excludeId = null)
+    {
+        if (!$appointmentDate) {
+            return false;
+        }
+
+        $checkDate = \Carbon\Carbon::parse($appointmentDate);
+        
+        // Check for appointments within 30 minutes before or after
+        $query = Appointment::where('appointment_date', '!=', null)
+            ->where('status', '!=', 'cancelled')
+            ->where(function($q) use ($checkDate) {
+                $q->whereBetween('appointment_date', [
+                    $checkDate->copy()->subMinutes(30),
+                    $checkDate->copy()->addMinutes(30)
+                ]);
+            });
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
+    }
+
+    /**
      * Store appointment from public form (no authentication required)
      */
     public function storePublic(Request $request)
@@ -28,6 +56,14 @@ class AppointmentController extends Controller
             return response()->json([
                 'message' => 'Error de validación',
                 'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Check for time conflicts
+        if ($request->appointment_date && $this->hasTimeConflict($request->appointment_date)) {
+            return response()->json([
+                'message' => 'El horario seleccionado no está disponible. Por favor elige otro horario.',
+                'errors' => ['appointment_date' => ['Horario no disponible']]
             ], 422);
         }
 
@@ -116,6 +152,14 @@ class AppointmentController extends Controller
             ], 422);
         }
 
+        // Check for time conflicts
+        if ($this->hasTimeConflict($request->appointment_date)) {
+            return response()->json([
+                'message' => 'El horario seleccionado no está disponible. Por favor elige otro horario.',
+                'errors' => ['appointment_date' => ['Horario no disponible']]
+            ], 422);
+        }
+
         // If patient_id provided, use it; otherwise find or create patient
         $patientId = $request->patient_id;
         
@@ -194,6 +238,14 @@ class AppointmentController extends Controller
             return response()->json([
                 'message' => 'Error de validación',
                 'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Check for time conflicts when updating appointment_date
+        if ($request->has('appointment_date') && $this->hasTimeConflict($request->appointment_date, $appointment->id)) {
+            return response()->json([
+                'message' => 'El horario seleccionado no está disponible. Por favor elige otro horario.',
+                'errors' => ['appointment_date' => ['Horario no disponible']]
             ], 422);
         }
 
@@ -292,6 +344,14 @@ class AppointmentController extends Controller
             ], 422);
         }
 
+        // Check for time conflicts
+        if ($this->hasTimeConflict($request->appointment_date, $appointment->id)) {
+            return response()->json([
+                'message' => 'El horario seleccionado no está disponible. Por favor elige otro horario.',
+                'errors' => ['appointment_date' => ['Horario no disponible']]
+            ], 422);
+        }
+
         $appointment->update([
             'appointment_date' => $request->appointment_date,
             'status' => 'pending',
@@ -300,6 +360,31 @@ class AppointmentController extends Controller
         return response()->json([
             'message' => 'Cita reagendada exitosamente',
             'appointment' => $appointment->fresh(),
+        ]);
+    }
+
+    /**
+     * Get weekly calendar appointments
+     */
+    public function weeklyCalendar(Request $request)
+    {
+        $startDate = $request->has('start_date') 
+            ? \Carbon\Carbon::parse($request->start_date)->startOfDay()
+            : \Carbon\Carbon::now()->startOfWeek(\Carbon\Carbon::MONDAY);
+
+        $endDate = $startDate->copy()->addDays(5)->endOfDay(); // Lunes a Sábado
+
+        $appointments = Appointment::with(['user', 'patient'])
+            ->whereNotNull('appointment_date')
+            ->where('status', '!=', 'cancelled')
+            ->whereBetween('appointment_date', [$startDate, $endDate])
+            ->orderBy('appointment_date')
+            ->get();
+
+        return response()->json([
+            'start_date' => $startDate->toDateString(),
+            'end_date' => $endDate->toDateString(),
+            'appointments' => $appointments,
         ]);
     }
 }

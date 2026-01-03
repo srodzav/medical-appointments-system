@@ -1,0 +1,61 @@
+<div class="weekly-calendar-container">
+  <!-- Header with navigation -->
+  <div class="calendar-header">
+    <div class="navigation">
+      <button (click)="previousWeek()" class="btn-nav">
+        <span>◀</span>
+        Anterior
+      </button>
+      <button (click)="currentWeek()" class="btn-current">Semana actual</button>
+      <button (click)="nextWeek()" class="btn-nav">
+        Siguiente
+        <span>▶</span>
+      </button>
+    </div>
+    <div class="actions">
+      <a [routerLink]="['/dashboard/appointments/create']" class="btn-create">+ Nueva Cita</a>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando calendario...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Calendar grid -->
+  <div *ngIf="!isLoading && !error" class="calendar-grid">
+    <div *ngFor="let daySlot of weekDays" class="day-column">
+      <!-- Day header -->
+      <div class="day-header">
+        <div class="day-name">{{ daySlot.day }}</div>
+        <div class="day-date">{{ formatDate(daySlot.date) }}</div>
+      </div>
+
+      <!-- Appointments for this day -->
+      <div class="day-appointments">
+        <div *ngFor="let appointment of daySlot.appointments" class="appointment-card" [ngClass]="getStatusClass(appointment.status)" [routerLink]="['/dashboard/appointments', appointment.id]">
+          <div class="appointment-time">
+            {{ formatTime(appointment.appointment_date!) }}
+          </div>
+          <div class="appointment-patient">
+            <strong>{{ appointment.patient?.name || appointment.patient_name }}</strong>
+          </div>
+          <div class="appointment-treatment">
+            {{ getTreatmentText(appointment.treatment_type) }}
+          </div>
+          <div class="appointment-status">
+            {{ getStatusLabel(appointment.status) }}
+          </div>
+        </div>
+
+        <!-- Empty state for day -->
+        <div *ngIf="daySlot.appointments.length === 0" class="no-appointments">Sin citas</div>
+      </div>
+    </div>
+  </div>
+</div>

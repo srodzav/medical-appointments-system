@@ -10,6 +10,7 @@ import { CreateComponent } from './dashboard/appointments/create/create.componen
 import { EditComponent } from './dashboard/appointments/edit/edit.component';
 import { ListComponent as PatientsListComponent } from './dashboard/patients/list/list.component';
 import { DetailComponent as PatientDetailComponent } from './dashboard/patients/detail/detail.component';
+import { WeeklyCalendarComponent } from './dashboard/weekly-calendar/weekly-calendar.component';
 
 export const routes: Routes = [
   // Public routes
@@ -24,9 +25,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', component: HomeComponent },
+      { path: 'calendario', component: WeeklyCalendarComponent },
       { path: 'citas', component: ListComponent },
       { path: 'citas/nueva', component: CreateComponent },
       { path: 'citas/editar/:id', component: EditComponent },
+      { path: 'appointments/create', component: CreateComponent },
+      { path: 'appointments/:id', component: EditComponent },
       { path: 'pacientes', component: PatientsListComponent },
       { path: 'pacientes/:id', component: PatientDetailComponent },
     ],

@@ -111,4 +111,15 @@ export class AppointmentService {
       appointment_date: newDate,
     });
   }
+
+  /**
+   * Get weekly calendar appointments (Monday to Saturday)
+   */
+  getWeeklyCalendar(startDate?: string): Observable<any> {
+    let params = new HttpParams();
+    if (startDate) {
+      params = params.set('start_date', startDate);
+    }
+    return this.http.get(`${environment.apiUrl}/appointments-weekly-calendar`, { params });
+  }
 }
