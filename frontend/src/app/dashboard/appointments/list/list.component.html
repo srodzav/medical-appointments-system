@@ -67,13 +67,13 @@
       <tbody>
         @for (appointment of filteredAppointments; track appointment.id) {
         <tr>
-          <td>
+          <td data-label="Paciente">
             <div class="patient-info">
               <span class="material-symbols-outlined">person</span>
               <strong>{{ appointment.patient_name }}</strong>
             </div>
           </td>
-          <td>
+          <td data-label="Contacto">
             <div class="contact-info">
               <div>
                 <span class="material-symbols-outlined">mail</span>
@@ -85,12 +85,12 @@
               </div>
             </div>
           </td>
-          <td>
+          <td data-label="Tratamiento">
             <span class="treatment-badge">
               {{ getTreatmentText(appointment.treatment_type) }}
             </span>
           </td>
-          <td>
+          <td data-label="Fecha y Hora">
             @if (appointment.appointment_date) {
             <div class="date-info">
               <span class="material-symbols-outlined">calendar_today</span>
@@ -105,12 +105,12 @@
             </div>
             }
           </td>
-          <td>
+          <td data-label="Estado">
             <span class="status-badge" [ngClass]="getStatusClass(appointment.status!)">
               {{ getStatusText(appointment.status!) }}
             </span>
           </td>
-          <td>
+          <td data-label="Acciones">
             <div class="actions">
               @if (!appointment.appointment_date) {
               <button [routerLink]="['/dashboard/citas/editar', appointment.id]" class="action-btn schedule-btn" title="Agendar fecha">

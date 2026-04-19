@@ -11,6 +11,8 @@ import { EditComponent } from './dashboard/appointments/edit/edit.component';
 import { ListComponent as PatientsListComponent } from './dashboard/patients/list/list.component';
 import { DetailComponent as PatientDetailComponent } from './dashboard/patients/detail/detail.component';
 import { WeeklyCalendarComponent } from './dashboard/weekly-calendar/weekly-calendar.component';
+import { FinanceComponent } from './dashboard/finance/finance.component';
+import { StatisticsComponent } from './dashboard/statistics/statistics.component';
 
 export const routes: Routes = [
   // Public routes
@@ -33,6 +35,8 @@ export const routes: Routes = [
       { path: 'appointments/:id', component: EditComponent },
       { path: 'pacientes', component: PatientsListComponent },
       { path: 'pacientes/:id', component: PatientDetailComponent },
+      { path: 'finanzas', component: FinanceComponent },
+      { path: 'estadisticas', component: StatisticsComponent },
     ],
   },
 

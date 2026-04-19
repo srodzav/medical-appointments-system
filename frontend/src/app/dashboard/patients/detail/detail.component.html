@@ -1,103 +1,609 @@
-<div class="patient-detail">
+<div class="patient-detail-page">
   <!-- Loading -->
-  <div *ngIf="loading" class="loading">
+  @if (loading) {
+  <div class="loading">
     <span class="material-symbols-outlined spinning">progress_activity</span>
-    <p>Cargando información...</p>
+    <p>Cargando información del paciente...</p>
   </div>
+  }
 
-  <!-- Patient Info -->
-  <div *ngIf="!loading && patient">
-    <!-- Header with back button -->
+  <!-- Patient Content -->
+  @if (!loading && patient) {
+  <div class="patient-content">
+    <!-- Header -->
     <div class="page-header">
       <button class="btn-back" routerLink="/dashboard/pacientes">
         <span class="material-symbols-outlined">arrow_back</span>
-        Volver
+        Volver a Pacientes
       </button>
     </div>
 
-    <!-- Patient Card -->
-    <div class="patient-card">
-      <div class="patient-avatar">
+    <!-- Patient Header Card -->
+    <div class="patient-header-card">
+      <div class="patient-avatar-large">
         {{ patient.name.charAt(0).toUpperCase() }}
       </div>
-      <div class="patient-info">
+      <div class="patient-main-info">
         <h1>{{ patient.name }}</h1>
-        <div class="info-grid">
-          <div class="info-item">
+        <div class="contact-info">
+          <div class="contact-item">
             <span class="material-symbols-outlined">email</span>
             <a [href]="'mailto:' + patient.email">{{ patient.email }}</a>
           </div>
-          <div class="info-item">
+          <div class="contact-item">
             <span class="material-symbols-outlined">call</span>
             <a [href]="'tel:' + patient.phone">{{ patient.phone }}</a>
           </div>
-          <div class="info-item">
-            <span class="material-symbols-outlined">calendar_today</span>
-            <span>Registro: {{ patient.created_at | date : 'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+      <div class="patient-stats">
+        <div class="stat-card">
+          <span class="material-symbols-outlined">event</span>
+          <div class="stat-content">
+            <span class="stat-number">{{ patient.appointments?.length || 0 }}</span>
+            <span class="stat-label">Citas</span>
           </div>
-          <div class="info-item">
-            <span class="material-symbols-outlined">event</span>
-            <span>{{ patient.appointments?.length || 0 }} citas registradas</span>
+        </div>
+        <div class="stat-card">
+          <span class="material-symbols-outlined">payments</span>
+          <div class="stat-content">
+            <span class="stat-number">${{ getTotalPaid().toFixed(2) }}</span>
+            <span class="stat-label">Total Pagado</span>
+          </div>
+        </div>
+        <div class="stat-card debt">
+          <span class="material-symbols-outlined">receipt_long</span>
+          <div class="stat-content">
+            <span class="stat-number">${{ getTotalDebt().toFixed(2) }}</span>
+            <span class="stat-label">Por Pagar</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Appointments History -->
-    <div class="appointments-section">
-      <h2>Historial de Citas</h2>
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav">
+      <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">
+        <span class="material-symbols-outlined">person</span>
+        Información Personal
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'medical'" (click)="activeTab = 'medical'">
+        <span class="material-symbols-outlined">medical_services</span>
+        Historial Médico
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'payments'" (click)="activeTab = 'payments'">
+        <span class="material-symbols-outlined">payments</span>
+        Pagos
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'plans'" (click)="activeTab = 'plans'">
+        <span class="material-symbols-outlined">credit_card</span>
+        Planes de Pago
+      </button>
+    </div>
 
-      <div *ngIf="!patient.appointments || patient.appointments.length === 0" class="empty-state">
-        <span class="material-symbols-outlined">event_busy</span>
-        <p>Este paciente aún no tiene citas registradas</p>
-      </div>
-
-      <div *ngIf="patient.appointments && patient.appointments.length > 0" class="appointments-list">
-        <div class="appointment-card" *ngFor="let appointment of patient.appointments">
-          <div class="appointment-header">
-            <span [class]="'status-badge ' + getStatusClass(appointment.status)">
-              {{ getStatusText(appointment.status) }}
-            </span>
-            <span class="appointment-date">
-              <span class="material-symbols-outlined">calendar_month</span>
-              {{ appointment.appointment_date | date : 'dd/MM/yyyy HH:mm' }}
-            </span>
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- INFO TAB -->
+      @if (activeTab === 'info') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <h2>Información del Paciente</h2>
+          <button type="button" class="btn-primary" *ngIf="!editingPatient" (click)="toggleEditPatient()">
+            <span class="material-symbols-outlined">edit</span>
+            Editar
+          </button>
+          <div *ngIf="editingPatient" class="btn-group">
+            <button type="button" class="btn-primary" (click)="savePatient()">
+              <span class="material-symbols-outlined">save</span>
+              Guardar
+            </button>
+            <button type="button" class="btn-secondary" (click)="toggleEditPatient()">Cancelar</button>
           </div>
+        </div>
 
-          <div class="appointment-body">
-            <div class="appointment-info">
-              <div class="info-row">
-                <span class="material-symbols-outlined">medical_services</span>
-                <span>
-                  <strong>Tratamiento:</strong>
-                  {{ getTreatmentText(appointment.treatment_type) }}
-                </span>
+        <div class="info-form">
+          <div class="form-section">
+            <h3>Datos Básicos</h3>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Nombre Completo</label>
+                <input type="text" [(ngModel)]="editedPatient.name" [disabled]="!editingPatient" />
               </div>
-              <div class="info-row" *ngIf="appointment.notes">
-                <span class="material-symbols-outlined">note</span>
-                <span>
-                  <strong>Notas:</strong>
-                  {{ appointment.notes }}
-                </span>
+              <div class="form-field">
+                <label>Email</label>
+                <input type="email" [(ngModel)]="editedPatient.email" [disabled]="!editingPatient" />
+              </div>
+              <div class="form-field">
+                <label>Teléfono</label>
+                <input type="tel" [(ngModel)]="editedPatient.phone" [disabled]="!editingPatient" />
+              </div>
+              <div class="form-field">
+                <label>Fecha de Nacimiento</label>
+                <input type="date" [(ngModel)]="editedPatient.birth_date" [disabled]="!editingPatient" />
+              </div>
+              <div class="form-field">
+                <label>Tipo de Sangre</label>
+                <input type="text" [(ngModel)]="editedPatient.blood_type" [disabled]="!editingPatient" placeholder="Ej: O+, A-, B+" />
               </div>
             </div>
           </div>
 
-          <div class="appointment-footer">
-            <button class="btn-sm" [routerLink]="['/dashboard/citas']">
-              Ver en citas
-              <span class="material-symbols-outlined">arrow_forward</span>
-            </button>
+          <div class="form-section">
+            <h3>Información Médica</h3>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label>Alergias</label>
+                <textarea [(ngModel)]="editedPatient.allergies" [disabled]="!editingPatient" rows="2" placeholder="Alergias conocidas"></textarea>
+              </div>
+              <div class="form-field full-width">
+                <label>Condiciones Crónicas</label>
+                <textarea [(ngModel)]="editedPatient.chronic_conditions" [disabled]="!editingPatient" rows="2" placeholder="Enfermedades crónicas o condiciones médicas"></textarea>
+              </div>
+              <div class="form-field full-width">
+                <label>Medicamentos Actuales</label>
+                <textarea [(ngModel)]="editedPatient.current_medications" [disabled]="!editingPatient" rows="2" placeholder="Medicamentos que toma actualmente"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Contacto de Emergencia</h3>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Nombre del Contacto</label>
+                <input type="text" [(ngModel)]="editedPatient.emergency_contact_name" [disabled]="!editingPatient" />
+              </div>
+              <div class="form-field">
+                <label>Teléfono del Contacto</label>
+                <input type="tel" [(ngModel)]="editedPatient.emergency_contact_phone" [disabled]="!editingPatient" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Información de Seguro</h3>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label>Detalles del Seguro</label>
+                <textarea [(ngModel)]="editedPatient.insurance_info" [disabled]="!editingPatient" rows="3" placeholder="Compañía de seguro, número de póliza, etc."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Notas Generales</h3>
+            <div class="form-grid">
+              <div class="form-field full-width">
+                <label>Notas</label>
+                <textarea [(ngModel)]="editedPatient.notes" [disabled]="!editingPatient" rows="4" placeholder="Notas adicionales sobre el paciente"></textarea>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      }
+
+      <!-- MEDICAL TAB -->
+      @if (activeTab === 'medical') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <h2>Historial Médico</h2>
+          <button class="btn-primary" (click)="showRecordForm = !showRecordForm">
+            <span class="material-symbols-outlined">add</span>
+            Nuevo Registro
+          </button>
+        </div>
+
+        <!-- New Record Form -->
+        @if (showRecordForm) {
+        <div class="form-card">
+          <h3>Nuevo Registro Médico</h3>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Fecha *</label>
+              <input type="date" [(ngModel)]="newRecord.record_date" required />
+            </div>
+            <div class="form-field">
+              <label>Tipo de Registro *</label>
+              <select [(ngModel)]="newRecord.record_type" required>
+                <option value="consultation">Consulta</option>
+                <option value="treatment">Tratamiento</option>
+                <option value="follow_up">Seguimiento</option>
+                <option value="diagnosis">Diagnóstico</option>
+                <option value="emergency">Emergencia</option>
+                <option value="other">Otro</option>
+              </select>
+            </div>
+            <div class="form-field full-width">
+              <label>Título *</label>
+              <input type="text" [(ngModel)]="newRecord.title" placeholder="Título del registro" required />
+            </div>
+            <div class="form-field full-width">
+              <label>Descripción *</label>
+              <textarea [(ngModel)]="newRecord.description" rows="3" placeholder="Descripción detallada" required></textarea>
+            </div>
+            <div class="form-field full-width">
+              <label>Diagnóstico</label>
+              <textarea [(ngModel)]="newRecord.diagnosis" rows="2" placeholder="Diagnóstico realizado"></textarea>
+            </div>
+            <div class="form-field full-width">
+              <label>Plan de Tratamiento</label>
+              <textarea [(ngModel)]="newRecord.treatment_plan" rows="2" placeholder="Plan de tratamiento propuesto"></textarea>
+            </div>
+            <div class="form-field full-width">
+              <label>Medicamentos</label>
+              <textarea [(ngModel)]="newRecord.medications" rows="2" placeholder="Medicamentos recetados"></textarea>
+            </div>
+            <div class="form-field full-width">
+              <label>Notas Adicionales</label>
+              <textarea [(ngModel)]="newRecord.notes" rows="2" placeholder="Notas adicionales"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" (click)="saveRecord()">
+              <span class="material-symbols-outlined">save</span>
+              Guardar Registro
+            </button>
+            <button class="btn-secondary" (click)="showRecordForm = false; resetRecordForm()">Cancelar</button>
+          </div>
+        </div>
+        }
+
+        <!-- Records List -->
+        @if (loadingRecords) {
+        <div class="loading-small">
+          <span class="material-symbols-outlined spinning">progress_activity</span>
+          <p>Cargando registros...</p>
+        </div>
+        }
+
+        @if (!loadingRecords && medicalRecords.length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">medical_services</span>
+          <p>No hay registros médicos aún</p>
+        </div>
+        }
+
+        @if (!loadingRecords && medicalRecords.length > 0) {
+        <div class="records-timeline">
+          @for (record of medicalRecords; track record.id) {
+          <div class="record-card">
+            <div class="record-header">
+              <div class="record-type-badge" [attr.data-type]="record.record_type">
+                {{ getRecordTypeText(record.record_type) }}
+              </div>
+              <div class="record-date">
+                <span class="material-symbols-outlined">calendar_today</span>
+                {{ record.record_date | date : 'dd/MM/yyyy' }}
+              </div>
+            </div>
+            <h4>{{ record.title }}</h4>
+            <p class="record-description">{{ record.description }}</p>
+            
+            @if (record.diagnosis) {
+            <div class="record-detail">
+              <strong>Diagnóstico:</strong> {{ record.diagnosis }}
+            </div>
+            }
+            
+            @if (record.treatment_plan) {
+            <div class="record-detail">
+              <strong>Plan de Tratamiento:</strong> {{ record.treatment_plan }}
+            </div>
+            }
+            
+            @if (record.medications) {
+            <div class="record-detail">
+              <strong>Medicamentos:</strong> {{ record.medications }}
+            </div>
+            }
+            
+            @if (record.notes) {
+            <div class="record-detail">
+              <strong>Notas:</strong> {{ record.notes }}
+            </div>
+            }
+
+            <div class="record-footer">
+              <span class="record-author">Registrado por: {{ record.user?.name || 'Sistema' }}</span>
+              <button class="btn-icon-danger" (click)="deleteRecord(record.id!)" title="Eliminar">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- PAYMENTS TAB -->
+      @if (activeTab === 'payments') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <h2>Historial de Pagos</h2>
+          <button class="btn-primary" (click)="showPaymentForm = !showPaymentForm">
+            <span class="material-symbols-outlined">add</span>
+            Registrar Pago
+          </button>
+        </div>
+
+        <!-- New Payment Form -->
+        @if (showPaymentForm) {
+        <div class="form-card">
+          <h3>Registrar Nuevo Pago</h3>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Fecha de Pago *</label>
+              <input type="date" [(ngModel)]="newPayment.payment_date" required />
+            </div>
+            <div class="form-field">
+              <label>Monto *</label>
+              <input type="number" [(ngModel)]="newPayment.amount" placeholder="0.00" step="0.01" min="0" required />
+            </div>
+            <div class="form-field">
+              <label>Método de Pago *</label>
+              <select [(ngModel)]="newPayment.payment_method" required>
+                <option value="cash">Efectivo</option>
+                <option value="card">Tarjeta</option>
+                <option value="transfer">Transferencia</option>
+                <option value="check">Cheque</option>
+                <option value="other">Otro</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Tipo de Pago *</label>
+              <select [(ngModel)]="newPayment.payment_type" required>
+                <option value="full">Pago Completo</option>
+                <option value="partial">Pago Parcial</option>
+                <option value="installment">Abono</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Plan de Pagos (Opcional)</label>
+              <select [(ngModel)]="newPayment.payment_plan_id">
+                <option [value]="undefined">Sin plan</option>
+                @for (plan of paymentPlans; track plan.id) {
+                @if (plan.status === 'active') {
+                <option [value]="plan.id">{{ plan.treatment_name }} (Resta: ${{ plan.remaining_amount }})</option>
+                }
+                }
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Referencia/Folio</label>
+              <input type="text" [(ngModel)]="newPayment.reference_number" placeholder="Número de referencia" />
+            </div>
+            <div class="form-field full-width">
+              <label>Notas</label>
+              <textarea [(ngModel)]="newPayment.notes" rows="2" placeholder="Notas sobre el pago"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" (click)="savePayment()">
+              <span class="material-symbols-outlined">save</span>
+              Registrar Pago
+            </button>
+            <button class="btn-secondary" (click)="showPaymentForm = false; resetPaymentForm()">Cancelar</button>
+          </div>
+        </div>
+        }
+
+        <!-- Payments Summary -->
+        <div class="summary-cards">
+          <div class="summary-card">
+            <span class="material-symbols-outlined">payments</span>
+            <div>
+              <div class="summary-amount">${{ getTotalPaid().toFixed(2) }}</div>
+              <div class="summary-label">Total Pagado</div>
+            </div>
+          </div>
+          <div class="summary-card">
+            <span class="material-symbols-outlined">receipt</span>
+            <div>
+              <div class="summary-amount">{{ getCompletedPaymentsCount() }}</div>
+              <div class="summary-label">Pagos Completados</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payments List -->
+        @if (loadingPayments) {
+        <div class="loading-small">
+          <span class="material-symbols-outlined spinning">progress_activity</span>
+          <p>Cargando pagos...</p>
+        </div>
+        }
+
+        @if (!loadingPayments && payments.length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">payments</span>
+          <p>No hay pagos registrados aún</p>
+        </div>
+        }
+
+        @if (!loadingPayments && payments.length > 0) {
+        <div class="payments-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Tipo</th>
+                <th>Referencia</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (payment of payments; track payment.id) {
+              <tr>
+                <td>{{ payment.payment_date | date : 'dd/MM/yyyy' }}</td>
+                <td class="amount">${{ payment.amount }}</td>
+                <td>{{ getPaymentMethodText(payment.payment_method) }}</td>
+                <td>{{ getPaymentTypeText(payment.payment_type) }}</td>
+                <td>{{ payment.reference_number || '-' }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="getStatusClass(payment.status)">
+                    {{ getStatusText(payment.status) }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-icon-danger" (click)="deletePayment(payment.id!)" title="Eliminar">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- PAYMENT PLANS TAB -->
+      @if (activeTab === 'plans') {
+      <div class="tab-panel">
+        <div class="panel-header">
+          <h2>Planes de Pago</h2>
+          <button class="btn-primary" (click)="showPlanForm = !showPlanForm">
+            <span class="material-symbols-outlined">add</span>
+            Nuevo Plan
+          </button>
+        </div>
+
+        <!-- New Plan Form -->
+        @if (showPlanForm) {
+        <div class="form-card">
+          <h3>Crear Plan de Pagos</h3>
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <label>Nombre del Tratamiento *</label>
+              <input type="text" [(ngModel)]="newPlan.treatment_name" placeholder="Ej: Ortodoncia Completa" required />
+            </div>
+            <div class="form-field">
+              <label>Monto Total *</label>
+              <input type="number" [(ngModel)]="newPlan.total_amount" placeholder="0.00" step="0.01" min="0" required />
+            </div>
+            <div class="form-field">
+              <label>Número de Pagos *</label>
+              <input type="number" [(ngModel)]="newPlan.total_installments" placeholder="1" min="1" required />
+            </div>
+            <div class="form-field">
+              <label>Fecha de Inicio *</label>
+              <input type="date" [(ngModel)]="newPlan.start_date" required />
+            </div>
+            <div class="form-field full-width">
+              <label>Notas</label>
+              <textarea [(ngModel)]="newPlan.notes" rows="2" placeholder="Notas sobre el plan de pagos"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" (click)="savePlan()">
+              <span class="material-symbols-outlined">save</span>
+              Crear Plan
+            </button>
+            <button class="btn-secondary" (click)="showPlanForm = false; resetPlanForm()">Cancelar</button>
+          </div>
+        </div>
+        }
+
+        <!-- Plans List -->
+        @if (loadingPlans) {
+        <div class="loading-small">
+          <span class="material-symbols-outlined spinning">progress_activity</span>
+          <p>Cargando planes...</p>
+        </div>
+        }
+
+        @if (!loadingPlans && paymentPlans.length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">credit_card</span>
+          <p>No hay planes de pago creados aún</p>
+        </div>
+        }
+
+        @if (!loadingPlans && paymentPlans.length > 0) {
+        <div class="plans-grid">
+          @for (plan of paymentPlans; track plan.id) {
+          <div class="plan-card" [class.completed]="plan.status === 'completed'" [class.cancelled]="plan.status === 'cancelled'">
+            <div class="plan-header">
+              <h4>{{ plan.treatment_name }}</h4>
+              <span class="status-badge" [ngClass]="getStatusClass(plan.status)">
+                {{ getStatusText(plan.status) }}
+              </span>
+            </div>
+            
+            <div class="plan-amounts">
+              <div class="amount-row">
+                <span>Total:</span>
+                <span class="amount">${{ plan.total_amount }}</span>
+              </div>
+              <div class="amount-row">
+                <span>Pagado:</span>
+                <span class="amount paid">${{ plan.paid_amount }}</span>
+              </div>
+              <div class="amount-row">
+                <span>Restante:</span>
+                <span class="amount remaining">${{ plan.remaining_amount }}</span>
+              </div>
+            </div>
+
+            <div class="plan-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="calculateProgress(plan)"></div>
+              </div>
+              <span class="progress-text">{{ calculateProgress(plan) }}% completado</span>
+            </div>
+
+            <div class="plan-installments">
+              <span class="material-symbols-outlined">credit_card</span>
+              {{ plan.paid_installments }} de {{ plan.total_installments }} pagos
+              <span class="installment-amount">({{ plan.installment_amount | number: '1.2-2' }} c/u)</span>
+            </div>
+
+            <div class="plan-dates">
+              <div>
+                <span class="material-symbols-outlined">calendar_today</span>
+                Inicio: {{ plan.start_date | date : 'dd/MM/yyyy' }}
+              </div>
+              @if (plan.end_date) {
+              <div>
+                <span class="material-symbols-outlined">event_available</span>
+                Fin: {{ plan.end_date | date : 'dd/MM/yyyy' }}
+              </div>
+              }
+            </div>
+
+            @if (plan.notes) {
+            <div class="plan-notes">
+              <strong>Notas:</strong> {{ plan.notes }}
+            </div>
+            }
+
+            <div class="plan-actions">
+              @if (plan.status === 'active') {
+              <button class="btn-warning" (click)="cancelPlan(plan.id!)">
+                <span class="material-symbols-outlined">cancel</span>
+                Cancelar Plan
+              </button>
+              }
+              @if (plan.status !== 'active' || plan.paid_amount === 0) {
+              <button class="btn-danger" (click)="deletePlan(plan.id!)">
+                <span class="material-symbols-outlined">delete</span>
+                Eliminar
+              </button>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
     </div>
   </div>
-
-  <!-- Error state -->
-  <div *ngIf="!loading && !patient" class="error-state">
-    <span class="material-symbols-outlined">error</span>
-    <h3>Paciente no encontrado</h3>
-    <button class="btn-primary" routerLink="/dashboard/pacientes">Volver a pacientes</button>
-  </div>
+  }
 </div>

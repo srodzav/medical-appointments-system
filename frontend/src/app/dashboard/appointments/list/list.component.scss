@@ -1,5 +1,8 @@
 .appointments-list-page {
   animation: fadeIn 0.3s ease;
+  padding: 1.5rem;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .page-header {
@@ -410,27 +413,211 @@
 }
 
 @media (max-width: 768px) {
+  .appointments-list-page {
+    padding: 1rem;
+  }
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
 
     .btn-primary {
       width: 100%;
       justify-content: center;
+      padding: 0.875rem 1.5rem;
     }
   }
 
   .filters-card {
     flex-direction: column;
+    padding: 1rem;
 
     .filter-group {
       width: 100%;
       min-width: auto;
+
+      input,
+      select {
+        font-size: 1rem; // Better for mobile
+      }
     }
 
     .results-count {
       width: 100%;
       text-align: center;
     }
+  }
+
+  .loading {
+    padding: 3rem 1rem;
+  }
+
+  .empty-state {
+    padding: 3rem 1.5rem;
+
+    .material-symbols-outlined {
+      font-size: 48px;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  // Hide table, show cards on mobile
+  .appointments-table-container {
+    overflow: visible;
+  }
+
+  .appointments-table {
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: grid;
+      gap: 1rem;
+
+      tr {
+        display: grid;
+        background: white;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        gap: 0.75rem;
+
+        &:hover {
+          background: white;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        td {
+          padding: 0;
+          display: block;
+          border: none;
+
+          &:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+
+  .patient-info {
+    flex-wrap: wrap;
+
+    .material-symbols-outlined {
+      font-size: 24px;
+    }
+
+    strong {
+      font-size: 1.1rem;
+    }
+  }
+
+  .contact-info {
+    div {
+      flex-wrap: wrap;
+      word-break: break-word;
+    }
+  }
+
+  .treatment-badge {
+    display: block;
+    text-align: center;
+  }
+
+  .date-info {
+    flex-wrap: wrap;
+  }
+
+  .pending-date {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+
+    .action-btn {
+      flex: 1;
+      min-width: 44px; // Touch target size
+      padding: 0.75rem;
+
+      .material-symbols-outlined {
+        font-size: 22px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    h1 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .filters-card {
+    .filter-group {
+      label {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+
+        .material-symbols-outlined {
+          display: none; // Hide icons on very small screens
+        }
+      }
+    }
+  }
+
+  .status-badge,
+  .treatment-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -1,0 +1,257 @@
+<div class="finance-page">
+  <div class="page-header">
+    <h1>
+      <span class="material-symbols-outlined">payment</span>
+      Gestión Financiera
+    </h1>
+    <p>Resumen completo de ingresos, pagos y cuentas por cobrar</p>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <p>Cargando datos financieros...</p>
+    </div>
+  } @else {
+    <!-- Income Summary Cards -->
+    <div class="summary-section">
+      <div class="summary-card">
+        <div class="card-icon today">
+          <span class="material-symbols-outlined">today</span>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Ingresos Hoy</div>
+          <div class="card-amount">{{ formatCurrency(incomeSummary.today) }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="card-icon week">
+          <span class="material-symbols-outlined">date_range</span>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Esta Semana</div>
+          <div class="card-amount">{{ formatCurrency(incomeSummary.this_week) }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="card-icon month">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Este Mes</div>
+          <div class="card-amount">{{ formatCurrency(incomeSummary.this_month) }}</div>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="card-icon year">
+          <span class="material-symbols-outlined">event</span>
+        </div>
+        <div class="card-content">
+          <div class="card-label">Este Año</div>
+          <div class="card-amount">{{ formatCurrency(incomeSummary.this_year) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts and Details Section -->
+    <div class="content-grid">
+      <!-- Monthly Income Chart -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">show_chart</span>
+            Ingresos Mensuales
+          </h2>
+          <div class="filters">
+            <select [(ngModel)]="selectedYear" (change)="onYearChange()">
+              @for (year of years; track year) {
+                <option [value]="year">{{ year }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          @if (monthlyIncome.length > 0) {
+            <div class="bar-chart">
+              @for (month of monthlyIncome; track month.month) {
+                <div class="bar-container">
+                  <div 
+                    class="bar"
+                    [style.height.%]="getBarHeight(month.total, getMaxMonthlyIncome())"
+                    [title]="formatCurrency(month.total)">
+                  </div>
+                  <div class="bar-label">{{ getMonthName(month.month).substring(0, 3) }}</div>
+                  <div class="bar-value">{{ formatCurrency(month.total) }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-chart">
+              <span class="material-symbols-outlined">insert_chart</span>
+              <p>No hay datos para mostrar</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Daily Income Chart -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">bar_chart</span>
+            Ingresos Diarios
+          </h2>
+          <div class="filters">
+            <select [(ngModel)]="selectedMonth" (change)="onMonthChange()">
+              @for (month of months; track month.value) {
+                <option [value]="month.value">{{ month.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          @if (dailyIncome.length > 0) {
+            <div class="bar-chart daily">
+              @for (day of dailyIncome; track day.day) {
+                <div class="bar-container">
+                  <div 
+                    class="bar"
+                    [style.height.%]="getBarHeight(day.total, getMaxDailyIncome())"
+                    [title]="formatCurrency(day.total)">
+                  </div>
+                  <div class="bar-label">{{ day.day }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-chart">
+              <span class="material-symbols-outlined">insert_chart</span>
+              <p>No hay datos para este mes</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">credit_card</span>
+            Métodos de Pago
+          </h2>
+        </div>
+        <div class="card-body">
+          @if (paymentMethods.length > 0) {
+            <div class="payment-methods-list">
+              @for (method of paymentMethods; track method.method) {
+                <div class="payment-method-item">
+                  <div class="method-info">
+                    <div class="method-name">
+                      @if (method.method === 'cash') {
+                        <span class="material-symbols-outlined">payments</span>
+                        Efectivo
+                      } @else if (method.method === 'card') {
+                        <span class="material-symbols-outlined">credit_card</span>
+                        Tarjeta
+                      } @else if (method.method === 'transfer') {
+                        <span class="material-symbols-outlined">account_balance</span>
+                        Transferencia
+                      } @else {
+                        <span class="material-symbols-outlined">more_horiz</span>
+                        {{ method.method }}
+                      }
+                    </div>
+                    <div class="method-stats">
+                      <span class="count">{{ method.count }} pagos</span>
+                      <span class="separator">•</span>
+                      <span class="percentage">{{ method.percentage }}%</span>
+                    </div>
+                  </div>
+                  <div class="method-amount">
+                    {{ formatCurrency(method.total) }}
+                  </div>
+                </div>
+                <div class="progress-bar">
+                  <div 
+                    class="progress-fill" 
+                    [style.width.%]="method.percentage">
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <span class="material-symbols-outlined">credit_card_off</span>
+              <p>No hay datos de métodos de pago</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Accounts Receivable -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">account_balance_wallet</span>
+            Cuentas por Cobrar
+          </h2>
+          <div class="total-badge">
+            Total: {{ formatCurrency(totalReceivable) }}
+          </div>
+        </div>
+        <div class="card-body">
+          @if (accountsReceivable.length > 0) {
+            <div class="receivables-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Paciente</th>
+                    <th>Pendiente</th>
+                    <th>Completado</th>
+                    <th>Antigüedad</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (account of accountsReceivable; track account.patient_id) {
+                    <tr>
+                      <td class="patient-name">
+                        <span class="material-symbols-outlined">person</span>
+                        {{ account.patient_name }}
+                      </td>
+                      <td class="amount-pending">
+                        {{ formatCurrency(account.total_pending) }}
+                      </td>
+                      <td class="amount-completed">
+                        {{ formatCurrency(account.total_completed) }}
+                      </td>
+                      <td class="date">
+                        {{ formatDate(account.oldest_pending_date) }}
+                      </td>
+                      <td>
+                        <a 
+                          [routerLink]="['/dashboard/patients', account.patient_id]"
+                          class="btn-view">
+                          <span class="material-symbols-outlined">visibility</span>
+                          Ver
+                        </a>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <span class="material-symbols-outlined">check_circle</span>
+              <p>¡Excelente! No hay cuentas pendientes</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

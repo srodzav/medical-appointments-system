@@ -1,0 +1,278 @@
+<div class="statistics-page">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <span class="material-symbols-outlined">analytics</span>
+        Estadísticas y Reportes
+      </h1>
+      <p>Análisis completo del rendimiento de tu clínica</p>
+    </div>
+    <button class="btn-export" (click)="exportReport()">
+      <span class="material-symbols-outlined">download</span>
+      Exportar Reporte
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Período:</label>
+      <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
+        @for (period of periods; track period.value) {
+          <option [value]="period.value">{{ period.label }}</option>
+        }
+      </select>
+    </div>
+
+    @if (selectedPeriod === 'custom') {
+      <div class="filter-group">
+        <label>Fecha Inicio:</label>
+        <input 
+          type="date" 
+          [(ngModel)]="startDate" 
+          (change)="onDateChange()">
+      </div>
+
+      <div class="filter-group">
+        <label>Fecha Fin:</label>
+        <input 
+          type="date" 
+          [(ngModel)]="endDate" 
+          (change)="onDateChange()">
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      <span class="material-symbols-outlined spinning">progress_activity</span>
+      <p>Cargando estadísticas...</p>
+    </div>
+  } @else {
+    <!-- Appointment Statistics -->
+    <div class="stats-section">
+      <div class="section-header">
+        <h2>
+          <span class="material-symbols-outlined">event</span>
+          Estadísticas de Citas
+        </h2>
+      </div>
+
+      <div class="appointment-stats-grid">
+        <div class="stat-card total">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">calendar_today</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ appointmentStats.total }}</div>
+            <div class="stat-label">Total de Citas</div>
+          </div>
+        </div>
+
+        <div class="stat-card confirmed">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">check_circle</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ appointmentStats.confirmed }}</div>
+            <div class="stat-label">Confirmadas</div>
+            <div class="stat-progress">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="getStatusPercentage(appointmentStats.confirmed)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card pending">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">schedule</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ appointmentStats.pending }}</div>
+            <div class="stat-label">Pendientes</div>
+            <div class="stat-progress">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="getStatusPercentage(appointmentStats.pending)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card cancelled">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">cancel</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ appointmentStats.cancelled }}</div>
+            <div class="stat-label">Canceladas</div>
+            <div class="stat-progress">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="getStatusPercentage(appointmentStats.cancelled)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card completed">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">task_alt</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ appointmentStats.completed }}</div>
+            <div class="stat-label">Completadas</div>
+            <div class="stat-progress">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="getStatusPercentage(appointmentStats.completed)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card rate">
+          <div class="stat-icon">
+            <span class="material-symbols-outlined">percent</span>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ appointmentStats.cancellation_rate.toFixed(1) }}%</div>
+            <div class="stat-label">Tasa de Cancelación</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+      <!-- Treatment Statistics -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">medical_services</span>
+            Tratamientos Más Populares
+          </h2>
+        </div>
+        <div class="card-body">
+          @if (treatmentStats.length > 0) {
+            <div class="treatments-list">
+              @for (treatment of treatmentStats; track treatment.treatment) {
+                <div class="treatment-item">
+                  <div class="treatment-info">
+                    <div class="treatment-name">{{ treatment.treatment }}</div>
+                    <div class="treatment-stats">
+                      <span class="count">{{ treatment.count }} veces</span>
+                      <span class="separator">•</span>
+                      <span class="percentage">{{ treatment.percentage.toFixed(1) }}%</span>
+                    </div>
+                  </div>
+                  <div class="treatment-revenue">
+                    {{ formatCurrency(treatment.total_revenue) }}
+                  </div>
+                </div>
+                <div class="progress-bar">
+                  <div 
+                    class="progress-fill" 
+                    [style.width.%]="treatment.percentage">
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <span class="material-symbols-outlined">medical_services</span>
+              <p>No hay datos de tratamientos</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Peak Hours -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">schedule</span>
+            Horas Pico
+          </h2>
+        </div>
+        <div class="card-body">
+          @if (peakHours.length > 0) {
+            <div class="peak-hours-chart">
+              @for (hour of peakHours; track hour.hour) {
+                <div class="hour-bar">
+                  <div 
+                    class="bar" 
+                    [style.height.%]="getBarHeight(hour.count)"
+                    [title]="hour.count + ' citas'">
+                  </div>
+                  <div class="hour-label">{{ formatHour(hour.hour) }}</div>
+                  <div class="hour-count">{{ hour.count }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <span class="material-symbols-outlined">schedule</span>
+              <p>No hay datos de horarios</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Top Patients -->
+      <div class="card top-patients-card">
+        <div class="card-header">
+          <h2>
+            <span class="material-symbols-outlined">star</span>
+            Top Pacientes
+          </h2>
+        </div>
+        <div class="card-body">
+          @if (topPatients.length > 0) {
+            <div class="patients-list">
+              @for (patient of topPatients; track patient.patient_id; let i = $index) {
+                <div class="patient-item">
+                  <div class="patient-rank" [class.top-three]="i < 3">
+                    {{ i + 1 }}
+                  </div>
+                  <div class="patient-info">
+                    <div class="patient-name">
+                      <span class="material-symbols-outlined">person</span>
+                      {{ patient.patient_name }}
+                    </div>
+                    <div class="patient-stats">
+                      <span class="appointments">
+                        <span class="material-symbols-outlined">event</span>
+                        {{ patient.total_appointments }} citas
+                      </span>
+                      <span class="separator">•</span>
+                      <span class="last-visit">
+                        Última visita: {{ formatDate(patient.last_appointment) }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="patient-spent">
+                    {{ formatCurrency(patient.total_spent) }}
+                  </div>
+                  <a 
+                    [routerLink]="['/dashboard/patients', patient.patient_id]"
+                    class="btn-view-small">
+                    <span class="material-symbols-outlined">visibility</span>
+                  </a>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <span class="material-symbols-outlined">group</span>
+              <p>No hay datos de pacientes</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+  
+</div>
