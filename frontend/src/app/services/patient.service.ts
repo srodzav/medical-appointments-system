@@ -9,11 +9,25 @@ export interface Patient {
   email: string;
   phone: string;
   notes?: string;
+  birth_date?: string;
+  blood_type?: string;
+  allergies?: string;
+  chronic_conditions?: string;
+  current_medications?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  insurance_info?: string;
   created_at?: string;
   updated_at?: string;
   appointments_count?: number;
   latest_appointment?: any;
   appointments?: any[];
+  medical_records?: any[];
+  medical_files?: any[];
+  payments?: any[];
+  payment_plans?: any[];
+  total_debt?: number;
+  total_paid?: number;
 }
 
 export interface PatientFilters {

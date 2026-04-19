@@ -89,6 +89,14 @@ class PatientController extends Controller
             'email' => 'required|email|unique:patients,email|max:255',
             'phone' => 'required|string|max:20',
             'notes' => 'nullable|string',
+            'birth_date' => 'nullable|date',
+            'blood_type' => 'nullable|string|max:3',
+            'allergies' => 'nullable|string',
+            'chronic_conditions' => 'nullable|string',
+            'current_medications' => 'nullable|string',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:20',
+            'insurance_info' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -98,7 +106,7 @@ class PatientController extends Controller
             ], 422);
         }
 
-        $patient = Patient::create($request->only(['name', 'email', 'phone', 'notes']));
+        $patient = Patient::create($request->only(['name', 'email', 'phone', 'notes', 'birth_date', 'blood_type', 'allergies', 'chronic_conditions', 'current_medications', 'emergency_contact_name', 'emergency_contact_phone', 'insurance_info']));
 
         return response()->json([
             'message' => 'Patient created successfully',
@@ -130,6 +138,14 @@ class PatientController extends Controller
             'email' => 'sometimes|required|email|max:255|unique:patients,email,' . $patient->id,
             'phone' => 'sometimes|required|string|max:20',
             'notes' => 'nullable|string',
+            'birth_date' => 'nullable|date',
+            'blood_type' => 'nullable|string|max:3',
+            'allergies' => 'nullable|string',
+            'chronic_conditions' => 'nullable|string',
+            'current_medications' => 'nullable|string',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:20',
+            'insurance_info' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -139,7 +155,7 @@ class PatientController extends Controller
             ], 422);
         }
 
-        $patient->update($request->only(['name', 'email', 'phone', 'notes']));
+        $patient->update($request->only(['name', 'email', 'phone', 'notes', 'birth_date', 'blood_type', 'allergies', 'chronic_conditions', 'current_medications', 'emergency_contact_name', 'emergency_contact_phone', 'insurance_info']));
 
         return response()->json([
             'message' => 'Patient updated successfully',
